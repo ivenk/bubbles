@@ -25,20 +25,17 @@ abstract class Program(private val unit: Unit, private val connections: Array<Co
         }
     }
 
-    private fun storeData(data: IData) {
-        dataStorage.plus(Pair("key", "value"))
+    private fun storeData(data: TransferData) {
+        dataStorage.plus(Pair("value", "value"))
     }
 
-    private fun getData(): IData {
-        return object : IData {
-            override fun getData(): Map<String, String> {
-                return mapOf()
-            }
-        }
+    private fun getData(): TransferData {
+        return TransferData()
     }
 }
 
 //TODO: We define the connections before hand. How can we match the connections with the id that is latter generated for the unit ?
+// How about the assembler ?
 
 class Unit(private val executable: IFunction, val children : List<Unit> = mutableListOf()) : IExecute {
     //TODO: This needs a unique object id
@@ -48,7 +45,7 @@ class Unit(private val executable: IFunction, val children : List<Unit> = mutabl
         this.children.plus(child)
     }
 
-    override fun execute(data: IData): IData {
+    override fun execute(data: TransferData): TransferData {
         return executable.run(data)
     }
 }
