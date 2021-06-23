@@ -4,5 +4,7 @@ interface IFunction {
 
     val id : Int
 
-    fun run(input: IData) : IData
+    fun run(input: TransferData) : TransferData
+
+    fun inputs(): Array<String>
 }
