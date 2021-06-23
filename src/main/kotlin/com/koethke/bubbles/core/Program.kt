@@ -4,15 +4,11 @@ package com.koethke.bubbles.core
  * The program is ready for execution. The order of the nodes as well as the connections between them have already been determined as much as statically possible.
  * The program is immutable to external sources.
  */
-class Program(private val units: Array<Unit>, private val connections: Array<Connection>,var args : IData = object : IData {
-    override fun getData(): Map<String, String> {
-        return mapOf()
-    } })
+abstract class Program(private val units: Array<Unit>, private val connections: Array<Connection>)
 {
     fun run() {
         TODO("Implement logic to execute the program")
     }
-
 
     private fun execute(unit: Unit, data: IData) {
         val result = unit.execute(data)
@@ -41,6 +37,8 @@ class Unit(private val bubble: IFunction, val children : List<Unit> = mutableLis
         return bubble.run(data)
     }
 }
+
+class SingleThreadProgram(units: Array<Unit>, connections: Array<Connection>) : Program(units, connections)
 
 
 
