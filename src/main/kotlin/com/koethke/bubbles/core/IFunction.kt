@@ -2,7 +2,7 @@ package com.koethke.bubbles.core
 
 interface IFunction {
 
-    val id : Int
+    val id : String
 
     fun run(input: TransferData) : TransferData
 
