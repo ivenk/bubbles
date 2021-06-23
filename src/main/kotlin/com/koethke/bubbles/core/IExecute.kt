@@ -1,5 +1,5 @@
 package com.koethke.bubbles.core
 
 interface IExecute {
-    fun execute(data: IData) : IData
+    fun execute(data: TransferData) : TransferData
 }
