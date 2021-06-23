@@ -1,5 +1,5 @@
 package com.koethke.bubbles.core
 
 class TransferData {
-    var data : Map<String, String> = mapOf("__control" to "")
+    val data = mutableMapOf("__control" to "")
 }

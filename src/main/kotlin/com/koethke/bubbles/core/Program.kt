@@ -7,7 +7,7 @@ package com.koethke.bubbles.core
 abstract class Program(private val unit: Unit, private val connections: Array<Connection>)
 //TODO: The structure of the connections needs to be either changed or made available within units without iteration over the list
 {
-    val dataStorage = mapOf<String, String>()
+    val dataStorage = mutableMapOf<String, String>()
 
     fun run() {
         TODO("Implement logic to execute the program")
@@ -25,8 +25,13 @@ abstract class Program(private val unit: Unit, private val connections: Array<Co
         }
     }
 
+    /**
+     * Stores all values from TransferData in the global storage
+      */
     private fun storeData(data: TransferData) {
-        dataStorage.plus(Pair("value", "value"))
+        for (key in data.data.keys) {
+            dataStorage.plus(Pair(data.data["__unitID@$key"], data.data[key]))
+        }
     }
 
     private fun getData(): TransferData {
@@ -39,14 +44,14 @@ abstract class Program(private val unit: Unit, private val connections: Array<Co
 
 class Unit(private val executable: IFunction, val children : List<Unit> = mutableListOf()) : IExecute {
     //TODO: This needs a unique object id
-    val id = ""
+    private val id = "test"
 
     fun addChild(child : Unit) {
         this.children.plus(child)
     }
 
     override fun execute(data: TransferData): TransferData {
-        return executable.run(data)
+        return executable.run(data).apply { this.data.plusAssign("__unitID" to id) }
     }
 }
 
