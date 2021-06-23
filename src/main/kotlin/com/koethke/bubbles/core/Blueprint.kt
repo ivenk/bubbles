@@ -1,7 +1,3 @@
 package com.koethke.bubbles.core
 
-class Blueprint(var unit: Array<Unit>, var connections: Array<Connection>) {
-
-
-
-}
+class Blueprint(var functions: Array<IFunction>, var connections: Array<Connection>)
