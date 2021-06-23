@@ -10,37 +10,50 @@ class ProgramTest {
     @Test
     fun simpleProgram() {
         val mockBubble = object : IFunction {
-            override fun run(input: IData): IData {
-                return emptyData()
+            override val id: String
+                get() = "sthUnique"
+
+            override fun run(input: TransferData): TransferData {
+                return TransferData()
+            }
+
+            override fun inputs(): Array<String> {
+                return emptyArray()
             }
         }
 
-        Program(Unit(mockBubble)).run()
+        val value = object : Program(Unit(mockBubble), emptyArray()) {}
+        value.run()
     }
 
     @Test
-    fun printProgram() {
-        val node = Unit(Printer(), listOf(Unit(Printer())))
+    fun singlePrinter() {
+        val node = Unit(TestPrinter("id"), emptyList())
 
-        val data = data(mapOf("Message" to "Wow"))
-
-        Program(node, data).run()
+        object : Program(node, emptyArray()){}.apply { this.run() }
     }
 
-    // Helpers
-    private fun data (returnValue: Map<String, String>) : IData {
-        return object : IData {
-            override fun getData(): Map<String, String> {
-                return mapOf("Message" to "Wow!")
-            }
+    @Test
+    fun twoPrinters() {
+        val node = Unit(TestPrinter("id"), listOf(Unit(TestPrinter("id2"), emptyList())))
+
+        object: Program(node, emptyArray()){}.apply { this.run() }
+    }
+
+
+    /// Helpers
+
+    /**
+     * Very simple IFunction implementation. Prints its own id.
+     */
+    class TestPrinter(override val id: String) : IFunction {
+        override fun run(input: TransferData): TransferData {
+            println(id)
+            return TransferData()
         }
-    }
 
-    fun emptyData(): IData {
-        return object : IData {
-            override fun getData(): Map<String, String> {
-                return mapOf()
-            }
+        override fun inputs(): Array<String> {
+            return emptyArray()
         }
     }
 }
