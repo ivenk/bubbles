@@ -7,14 +7,14 @@ package com.koethke.bubbles.core
 abstract class Program(private val unit: Unit, private val connections: Array<Connection>)
 //TODO: The structure of the connections needs to be either changed or made available within units without iteration over the list
 {
-    val dataStorage = mutableMapOf<String, String>()
+    private val dataStorage = mutableMapOf<String, String>()
 
     fun run() {
-        TODO("Implement logic to execute the program")
+        execute(unit)
     }
 
     private fun execute(unit: Unit) {
-        val data = getData()
+        val data = getData(unit)
         val result = unit.execute(data)
         storeData(result)
 
@@ -34,21 +34,25 @@ abstract class Program(private val unit: Unit, private val connections: Array<Co
         }
     }
 
-    private fun getData(): TransferData {
-        return TransferData()
+    /**
+     * Retrieves the required data for the execution of a unit from global data storage
+     */
+    private fun getData(unit: Unit): TransferData {
+        val data = TransferData()
+        connections
+            .filter { it.secondID == unit.id && it.secondValueID.equals(unit.executable.inputs()) }
+            .forEach { data.data.plusAssign(Pair(it.secondValueID, dataStorage.getValue("" + it.firstID + "@" + it.firstValueID))) }
+
+        return data
     }
 }
 
 //TODO: We define the connections before hand. How can we match the connections with the id that is latter generated for the unit ?
 // How about the assembler ?
 
-class Unit(private val executable: IFunction, val children : List<Unit> = mutableListOf()) : IExecute {
+class Unit(val executable: IFunction, val children : List<Unit> = mutableListOf()) : IExecute {
     //TODO: This needs a unique object id
-    private val id = "test"
-
-    fun addChild(child : Unit) {
-        this.children.plus(child)
-    }
+    val id = "test"
 
     override fun execute(data: TransferData): TransferData {
         return executable.run(data).apply { this.data.plusAssign("__unitID" to id) }
