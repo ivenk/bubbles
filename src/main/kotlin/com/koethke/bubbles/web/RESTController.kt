@@ -8,10 +8,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.ui.Model
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class RESTController {
@@ -44,10 +41,13 @@ class RESTController {
     }
 
 
-    @PostMapping()
-    fun compile(): ResponseEntity<Boolean> {
+    @PostMapping(
+        value = ["/services"], consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun compile(@RequestBody blueprint: Blueprint): ResponseEntity<Boolean> {
         // TODO Takes in a description of the created program in the frontend. Code components are identified via id.
-        val compileBlueprint = mainService.compileBlueprint(Blueprint(emptyArray(), emptyArray()))
+
+        val compileBlueprint = mainService.compileBlueprint(blueprint)
         return ResponseEntity<Boolean>(true, HttpStatus.OK)
     }
 }
