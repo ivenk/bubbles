@@ -30,7 +30,7 @@ abstract class Program(private val unit: Unit, private val connections: Array<Co
       */
     private fun storeData(data: TransferData) {
         for (key in data.data.keys) {
-            dataStorage.plus(Pair(data.data["__unitID@$key"], data.data[key]))
+            dataStorage.plusAssign(Pair(data.data["__unitID"] + "@" + key, data.data[key].orEmpty()))
         }
     }
 
@@ -40,7 +40,7 @@ abstract class Program(private val unit: Unit, private val connections: Array<Co
     private fun getData(unit: Unit): TransferData {
         val data = TransferData()
         connections
-            .filter { it.secondID == unit.id && it.secondValueID.equals(unit.executable.inputs()) }
+            .filter { it.secondID == unit.id && unit.executable.inputs().contains(it.secondValueID) }
             .forEach { data.data.plusAssign(Pair(it.secondValueID, dataStorage.getValue("" + it.firstID + "@" + it.firstValueID))) }
 
         return data
@@ -51,13 +51,19 @@ abstract class Program(private val unit: Unit, private val connections: Array<Co
 // How about the assembler ?
 
 class Unit(val executable: IFunction, val children : List<Unit> = mutableListOf()) : IExecute {
-    //TODO: This needs a unique object id
-    val id = "test"
 
+    // Unique object id
+    val id : String = idCounter.toString()
+    init {
+        idCounter += 1
+    }
 
 
     override fun execute(data: TransferData): TransferData {
         return executable.run(data).apply { this.data.plusAssign("__unitID" to id) }
+    }
+    companion object {
+        var idCounter = 0
     }
 }
 
