@@ -1,5 +1,6 @@
 package com.koethke.bubbles.core
 
+import com.koethke.bubbles.exec.core.Addition
 import com.koethke.bubbles.exec.core.Getter
 import com.koethke.bubbles.exec.core.Printer
 import org.junit.jupiter.api.Test
@@ -28,14 +29,14 @@ class ProgramTest {
     fun singlePrinter() {
         val node = Unit(TestPrinter(), emptyList())
 
-        object : Program(node, emptyArray()){}.apply { this.run() }
+        object : Program(node, emptyArray()){}.run()
     }
 
     @Test
     fun twoPrinters() {
         val node = Unit(TestPrinter(), listOf(Unit(TestPrinter(), emptyList())))
 
-        object: Program(node, emptyArray()){}.apply { this.run() }
+        object: Program(node, emptyArray()){}.run()
     }
 
     /*
@@ -54,10 +55,26 @@ class ProgramTest {
         val value = "startValue"
         val node = Unit(Getter(value), listOf(printer))
 
-        object: Program(node, arrayOf(Connection(node.id, printer.id, "Value", "Message"))) {}.apply { this.run() }
+        object: Program(node, arrayOf(Connection(node.id, printer.id, "Value", "Message"))) {}.run()
     }
 
 
+    @Test
+    fun testAddition() {
+        val printer1 = Unit(Printer())
+
+        val addition = Unit(Addition(), listOf(printer1))
+        val getter2 = Unit(Getter("1"), listOf(addition))
+        val getter1 = Unit(Getter("2"), listOf(getter2))
+
+        val connections = arrayOf(
+            Connection(getter2.id, addition.id, "Value", "First"),
+            Connection(getter1.id, addition.id, "Value", "Second"),
+            Connection(addition.id, printer1.id, "Sum", "Message")
+        )
+
+        object: Program(getter1, connections) {}.run()
+    }
 
 
 
