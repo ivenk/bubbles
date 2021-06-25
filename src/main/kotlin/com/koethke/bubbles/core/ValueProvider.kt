@@ -1,4 +1,5 @@
 package com.koethke.bubbles.core
 
-interface ValueProvider : IFunction{
+interface ValueProvider<T> : IFunction {
+    val value : T
 }

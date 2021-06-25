@@ -1,3 +1,3 @@
 package com.koethke.bubbles.core
 
-class Blueprint(var functions: Array<IFunction>, var connections: Array<Connection>)
+class Blueprint(var functionIDs: Array<String>, var connections: Array<Connection>)
